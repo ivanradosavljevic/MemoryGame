@@ -8,10 +8,10 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.CountDownTimer;
-import android.os.Parcelable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
@@ -20,7 +20,11 @@ import android.widget.TextView;
 import android.os.Handler;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import java.io.InputStream;
+import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -46,12 +50,17 @@ public class GameActivity extends AppCompatActivity {
     int levelTime = 0;
     int level = 1;
     CountDownTimer countDownTimer;
+    int timeLeft = 0;
+    boolean reloadPrevious = false;
+    boolean clickedExit = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //vidi kad treba da se pokrece task (zbor resume)
         new JSONOperation(GameActivity.this).execute();
+        playerPoints = getIntent().getIntExtra("playerPoints", 0);
+        levelTime = getIntent().getIntExtra("levelTime", 30);
+        level = getIntent().getIntExtra("level", 1);
         setContentView(R.layout.game);
         tv_p1 = (TextView) findViewById(R.id.tv_p1);
         tv_level = (TextView) findViewById(R.id.tv_level);
@@ -80,12 +89,8 @@ public class GameActivity extends AppCompatActivity {
         iv_34 = (ImageView) findViewById(R.id.iv_34);
         imageViewList.add(iv_34);
         progressBar = (ProgressBar) findViewById(R.id.progressbar);
-        // check for number of points
-            playerPoints = getIntent().getIntExtra("playerPoints", 0);
-            levelTime = getIntent().getIntExtra("levelTime", 30);
-            level = getIntent().getIntExtra("level", 1);
-            tv_p1.setText("P1: " + playerPoints);
-            tv_level.setText("Level: "+level);
+        tv_p1.setText("P1: " + playerPoints);
+        tv_level.setText("Level: " + level);
     }
 
     public List<ImageView> getListOfImageViews() {
@@ -212,7 +217,6 @@ public class GameActivity extends AppCompatActivity {
                     }
                 }
         }
-        //tv_p1.setText(playerPoints);
         //check which image is selected and save it to temporary variable
         if (cardNumber == 1) {
             firstCard = cardsArray[card];
@@ -251,100 +255,124 @@ public class GameActivity extends AppCompatActivity {
                 case 0:
                     iv_11.setEnabled(false);
                     imageViewList.remove(iv_11);
+                    listOfCards.get(0).setBack(true);
                     break;
                 case 1:
                     iv_12.setEnabled(false);
                     imageViewList.remove(iv_12);
+                    listOfCards.get(1).setBack(true);
                     break;
                 case 2:
                     iv_13.setEnabled(false);
                     imageViewList.remove(iv_13);
+                    listOfCards.get(2).setBack(true);
                     break;
                 case 3:
                     iv_14.setEnabled(false);
                     imageViewList.remove(iv_14);
+                    listOfCards.get(3).setBack(true);
                     break;
                 case 4:
                     iv_21.setEnabled(false);
                     imageViewList.remove(iv_21);
+                    listOfCards.get(4).setBack(true);
                     break;
                 case 5:
                     iv_22.setEnabled(false);
                     imageViewList.remove(iv_22);
+                    listOfCards.get(5).setBack(true);
                     break;
                 case 6:
                     iv_23.setEnabled(false);
                     imageViewList.remove(iv_23);
+                    listOfCards.get(0).setBack(true);
                     break;
                 case 7:
                     iv_24.setEnabled(false);
                     imageViewList.remove(iv_24);
+                    listOfCards.get(1).setBack(true);
                     break;
                 case 8:
                     iv_31.setEnabled(false);
                     imageViewList.remove(iv_31);
+                    listOfCards.get(2).setBack(true);
                     break;
                 case 9:
                     iv_32.setEnabled(false);
                     imageViewList.remove(iv_32);
+                    listOfCards.get(3).setBack(true);
                     break;
                 case 10:
                     iv_33.setEnabled(false);
                     imageViewList.remove(iv_33);
+                    listOfCards.get(4).setBack(true);
                     break;
                 case 11:
                     iv_34.setEnabled(false);
                     imageViewList.remove(iv_34);
+                    listOfCards.get(5).setBack(true);
                     break;
             }
             switch (clickedSecond) {
                 case 0:
                     iv_11.setEnabled(false);
                     imageViewList.remove(iv_11);
+                    listOfCards.get(0).setBack(true);
                     break;
                 case 1:
                     iv_12.setEnabled(false);
                     imageViewList.remove(iv_12);
+                    listOfCards.get(1).setBack(true);
                     break;
                 case 2:
                     iv_13.setEnabled(false);
                     imageViewList.remove(iv_13);
+                    listOfCards.get(2).setBack(true);
                     break;
                 case 3:
                     iv_14.setEnabled(false);
                     imageViewList.remove(iv_14);
+                    listOfCards.get(3).setBack(true);
                     break;
                 case 4:
                     iv_21.setEnabled(false);
                     imageViewList.remove(iv_21);
+                    listOfCards.get(4).setBack(true);
                     break;
                 case 5:
                     iv_22.setEnabled(false);
                     imageViewList.remove(iv_22);
+                    listOfCards.get(5).setBack(true);
                     break;
                 case 6:
                     iv_23.setEnabled(false);
                     imageViewList.remove(iv_23);
+                    listOfCards.get(0).setBack(true);
                     break;
                 case 7:
                     iv_24.setEnabled(false);
                     imageViewList.remove(iv_24);
+                    listOfCards.get(1).setBack(true);
                     break;
                 case 8:
                     iv_31.setEnabled(false);
                     imageViewList.remove(iv_31);
+                    listOfCards.get(2).setBack(true);
                     break;
                 case 9:
                     iv_32.setEnabled(false);
                     imageViewList.remove(iv_32);
+                    listOfCards.get(3).setBack(true);
                     break;
                 case 10:
                     iv_33.setEnabled(false);
                     imageViewList.remove(iv_33);
+                    listOfCards.get(4).setBack(true);
                     break;
                 case 11:
                     iv_34.setEnabled(false);
                     imageViewList.remove(iv_34);
+                    listOfCards.get(5).setBack(true);
                     break;
             }
             playerPoints++;
@@ -377,15 +405,21 @@ public class GameActivity extends AppCompatActivity {
                             levelTime = levelTime - 10;
                             intent.putExtra("levelTime", levelTime);
                             level++;
-                            intent.putExtra("level",level);
-                            finish();
+                            intent.putExtra("level", level);
+//                            clickedExit = false;
+                            //finish();
                             startActivity(intent);
                         }
                     })
                     .setNegativeButton("EXIT", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int i) {
-                            savePoints(playerPoints,true);
+                            reloadPrevious = false;
+                            clickedExit = true;
+                            finish();
+                            savePoints(playerPoints, true);
+//                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+//                            startActivity(intent);
                         }
                     });
             AlertDialog alertDialog = alertDialogBuilder.create();
@@ -399,14 +433,53 @@ public class GameActivity extends AppCompatActivity {
         intent.putExtra("isClosing", isClosing);
         startActivity(intent);
     }
-    //    @Override
-//    protected void onPause() {
-//        super.onPause();
-//        SharedPreferences sharedPreferences = getSharedPreferences("X", MODE_PRIVATE);
-//        SharedPreferences.Editor editor = sharedPreferences.edit();
-//        editor.putString("gameActivity", getClass().getName());
-//        editor.commit();
-//    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        countDownTimer.cancel();
+        SharedPreferences sharedPreferences = getSharedPreferences("X", MODE_PRIVATE);
+        SharedPreferences.Editor prefEditor = sharedPreferences.edit();
+        if (imageViewList.size() == 12 || clickedExit) {
+            reloadPrevious = false;
+        } else {
+            reloadPrevious = true;
+        }
+//        //remove bitmaps from listOfCards and then use shared preference
+        //!!!!osatalo ne dovrseno, mucim muku sa bitmapama!!!
+//        for(Card card : listOfCards)
+//        {
+//            card.setBitmap(null);
+//        }
+//        Gson gson = new Gson();
+//        String jsonCards = gson.toJson(listOfCards);
+//        prefEditor.putString("listOfCards", jsonCards);
+        prefEditor.putInt("points", playerPoints);
+        prefEditor.putInt("level", level);
+        prefEditor.putBoolean("reloadPrevious", reloadPrevious);
+        prefEditor.putInt("timeLeft", timeLeft);
+        prefEditor.commit();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        SharedPreferences sharedPreferences = getSharedPreferences("X", MODE_PRIVATE);
+        Gson gson = new Gson();
+        reloadPrevious = sharedPreferences.getBoolean("reloadPrevious", false);
+        if (reloadPrevious) {
+            playerPoints = sharedPreferences.getInt("points", 0);
+            tv_p1.setText("P1 points" + playerPoints);
+            tv_level.setText("Level: " + level);
+            timeLeft = sharedPreferences.getInt("timeLeft", 0);
+            runProgressBar(timeLeft*1000);
+            //retrive listofCards
+//            String gsonString = sharedPreferences.getString("listOfCards", "");
+//            Type typeList = new TypeToken<List<Card>>(){}.getType();
+//            listOfCards = gson.fromJson(gsonString,typeList);
+        }
+
+    }
 
     private class JSONOperation extends AsyncTask<Void, Void, ArrayList<String>> {
         GameActivity context;
@@ -468,47 +541,54 @@ public class GameActivity extends AppCompatActivity {
             context.image206 = context.getListOfCards().get(5).getId() + 100;
             Collections.shuffle(Arrays.asList(context.cardsArray));
             progressDialog.dismiss();
-            countDownTimer = new CountDownTimer(levelTime * 1000, 1000) {
-                @Override
-                public void onTick(long millisUntilFinished) {
-                    int progress = (int) (millisUntilFinished / 1000);
-                    progressBar.setProgress(progress);
-                }
-
-                @Override
-                public void onFinish() {
-                    progressBar.setProgress(0);
-                    if (getListOfImageViews().size() != 0) {
-                        Toast.makeText(getApplicationContext(), "TIMES UP! Number of points: " + playerPoints, Toast.LENGTH_SHORT).show();
-                    }
-                    for (ImageView iv : getListOfImageViews()) {
-                        iv.setEnabled(false);
-                    }
-                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(GameActivity.this);
-                    alertDialogBuilder.setMessage("Try again? \nP1:" + playerPoints)
-                            .setCancelable(false)
-                            .setPositiveButton("Play again", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    Intent intent = new Intent(getApplicationContext(), GameActivity.class);
-                                    finish();
-                                    startActivity(intent);
-                                    savePoints(playerPoints, false);
-                                }
-                            })
-                            .setNegativeButton("EXIT", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int i) {
-                                    finish();
-                                    savePoints(playerPoints, true);
-                                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                                    startActivity(intent);
-                                }
-                            });
-                    AlertDialog alertDialog = alertDialogBuilder.create();
-                    alertDialog.show();
-                }
-            }.start();
+            runProgressBar(levelTime * 1000);
         }
+    }
+
+    private void runProgressBar(int time) {
+        countDownTimer = new CountDownTimer(time, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                timeLeft = (int) (millisUntilFinished / 1000);
+                progressBar.setProgress(timeLeft);
+            }
+
+            @Override
+            public void onFinish() {
+                progressBar.setProgress(0);
+                reloadPrevious = false;
+                if (getListOfImageViews().size() != 0) {
+                    Toast.makeText(getApplicationContext(), "TIMES UP! Number of points: " + playerPoints, Toast.LENGTH_SHORT).show();
+                }
+                for (ImageView iv : getListOfImageViews()) {
+                    iv.setEnabled(false);
+                }
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(GameActivity.this);
+                alertDialogBuilder.setMessage("Try again? \nP1:" + playerPoints)
+                        .setCancelable(false)
+                        .setPositiveButton("Play again", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+//                                clickedExit = false;
+                                finish();
+//                                    Intent intent = new Intent(getApplicationContext(), GameActivity.class);
+//                                    startActivity(intent);
+                                savePoints(playerPoints, false);
+                            }
+                        })
+                        .setNegativeButton("EXIT", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int i) {
+                                clickedExit = true;
+                                finish();
+                                savePoints(playerPoints, true);
+//                                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+//                                    startActivity(intent);
+                            }
+                        });
+                AlertDialog alertDialog = alertDialogBuilder.create();
+                alertDialog.show();
+            }
+        }.start();
     }
 }

@@ -29,7 +29,11 @@
         </activity>
         <activity android:name=".ResumeActivity" />
         <activity android:name=".SafePointsActivity" />
-        <activity android:name=".HighscoresActivity"></activity>
+        <activity android:name=".HighscoresActivity" />
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

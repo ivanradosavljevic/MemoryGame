@@ -7,5 +7,6 @@
     <string name="settings">Settings</string>
     <string name="title_activity_main">MemoryGame</string>
     <string name="title_activity_resume">Memory Game</string>
+    <string name="title_activity_settings">SettingsActivity</string>
 
 </resources>

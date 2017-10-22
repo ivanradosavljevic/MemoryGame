@@ -11,24 +11,30 @@ import java.util.ArrayList;
 public class Card {
     private Bitmap bitmap;
     private int id;
+    boolean isBack;
 
     public Card(Bitmap bitmap, int id) {
         this.bitmap = bitmap;
         this.id = id;
+        isBack = false;
     }
 
+    public void setBitmap(Bitmap bitmap) {
+        this.bitmap = bitmap;
+    }
     public Bitmap getBitmap() {
         return bitmap;
     }
-
-    public void setBitmapl(Bitmap bitmap) {
-        this.bitmap = bitmap;
+    public boolean isBack() {
+        return isBack;
+    }
+    public void setBack(boolean back) {
+        isBack = back;
     }
 
     public int getId() {
         return id;
     }
-
     public void setId(int id) {
         this.id = id;
     }

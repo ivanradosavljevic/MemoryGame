@@ -1,11 +1,17 @@
 package com.example.ivanradosavljevic.memorygame;
 
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 public class HighscoresActivity extends AppCompatActivity {
 
@@ -18,19 +24,19 @@ public class HighscoresActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-//        if (savedInstanceState != null) {
-//            players = savedInstanceState.getParcelableArrayList("highscore");
-//        } else {
-//            players = new ArrayList<>();
-//        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_highscores);
-        players = Player.playerList;
+       // players = Player.playerList;
         firstPlace = (TextView) findViewById(R.id.first_place);
         secondPlace = (TextView) findViewById(R.id.second_place);
         thirdPlace = (TextView) findViewById(R.id.third_place);
         fourthPlace = (TextView) findViewById(R.id.fourth_place);
         fifthPlace = (TextView) findViewById(R.id.fifth_place);
+        SharedPreferences sharedPreferences = getSharedPreferences("Y", MODE_PRIVATE);
+        Gson gson = new Gson();
+        String gsonString = sharedPreferences.getString("gsonPlayers", "");
+            Type typeList = new TypeToken<List<Player>>(){}.getType();
+            players = gson.fromJson(gsonString,typeList);
 
         //highest score first
         Collections.sort(players);

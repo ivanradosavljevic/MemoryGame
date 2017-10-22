@@ -1,6 +1,7 @@
 package com.example.ivanradosavljevic.memorygame;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -8,6 +9,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import com.google.gson.Gson;
 
 public class SafePointsActivity extends AppCompatActivity {
 
@@ -19,10 +22,6 @@ public class SafePointsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        if(savedInstanceState != null)
-        {
-            Player.playerList = savedInstanceState.getParcelable("highscore");
-        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_safe_points);
         etName = (EditText) findViewById(R.id.editTextName);
@@ -44,9 +43,15 @@ public class SafePointsActivity extends AppCompatActivity {
             startActivity(intent);
         }
     }
-        @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putParcelableArrayList("highscore", Player.playerList);
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        SharedPreferences sharedPreferences = getSharedPreferences("Y", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        Gson gson = new Gson();
+        String gsonPlayer = gson.toJson(Player.playerList);
+        editor.putString("gsonPlayers", gsonPlayer);
+        editor.commit();
     }
 }

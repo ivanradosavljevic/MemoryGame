@@ -31,4 +31,7 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(MainActivity.this,HighscoresActivity.class);
         startActivity(intent);
     }
+    public void clickedSettings(View v){
+        Toast.makeText(this, "To be continued", Toast.LENGTH_SHORT).show();
+    }
 }
