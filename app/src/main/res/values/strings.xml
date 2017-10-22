@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">MemoryGame</string>
+    <string name="PointsP1">P1: 0</string>
+    <string name="new_game">New Game</string>
+    <string name="resume_game">Resume Game</string>
+    <string name="highscore">Highscores​</string>
+    <string name="settings">Settings</string>
+    <string name="title_activity_main">MemoryGame</string>
+    <string name="title_activity_resume">Memory Game</string>
+
+</resources>
